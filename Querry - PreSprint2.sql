@@ -1,3 +1,247 @@
+
+-- Exercício 1
+
+CREATE DATABASE PetShop;
+USE PetShop;
+
+CREATE TABLE Cliente (
+  idCliente INT PRIMARY KEY AUTO_INCREMENT,
+  nome VARCHAR(100),
+  telefoneFixo VARCHAR(15),
+  telefoneCelular VARCHAR(15),
+  endereco VARCHAR(100)
+);
+
+CREATE TABLE Pet (
+  idPet INT PRIMARY KEY AUTO_INCREMENT,
+  tipo_animal VARCHAR(50),
+  nome VARCHAR(100),
+  raca VARCHAR(50),
+  dataNascimento DATE,
+  fkCliente INT, FOREIGN KEY (fkCliente) REFERENCES Cliente (idCliente)
+);
+
+INSERT INTO Cliente (nome, telefoneFixo, telefoneCelular, endereco)
+VALUES 
+('Ana Silva', '1122334455', '11999887766', 'Rua das Flores, 123'),
+('Carlos Silva', '1133445566', '11988776655', 'Rua das Acácias, 456'),
+('Beatriz Santos', '1144556677', '11977665544', 'Avenida Paulista, 789');
+
+INSERT INTO Pet (tipo_animal, nome, raca, dataNascimento, fkCliente)
+VALUES
+('Cachorro', 'Rex', 'Labrador', '2020-01-15', 1),
+('Gato', 'Mimi', 'Persa', '2019-06-10', 2),
+('Cachorro', 'Bolt', 'Bulldog', '2021-05-22', 1),
+('Pássaro', 'Lola', 'Calopsita', '2020-12-18', 3);
+
+
+SELECT * FROM Cliente;
+SELECT * FROM Pet;
+
+ALTER TABLE Cliente MODIFY COLUMN Nome VARCHAR(100);
+DESCRIBE Cliente;
+
+SELECT * FROM Pet WHERE tipo_Animal = 'Cachorro'; 
+
+SELECT nome, dataNascimento FROM Pet;
+
+SELECT * FROM Pet ORDER BY nome;
+
+SELECT * FROM Cliente ORDER BY endereco DESC;
+
+SELECT * FROM Pet WHERE nome LIKE 'Rex';
+
+SELECT * FROM Cliente WHERE nome LIKE '%Silva';
+
+UPDATE Cliente SET telefoneCelular = '1140028922' WHERE idCliente = 2;
+
+SELECT * FROM Cliente;
+
+SELECT Pet.nome AS Pet, Cliente.nome AS Dono
+FROM Pet
+JOIN Cliente ON Pet.fkCliente = Cliente.idCliente;
+
+SELECT Pet.nome AS Pet, Cliente.nome AS Dono
+FROM Pet
+JOIN Cliente ON Pet.fkCliente = Cliente.idCliente WHERE idCliente = 2;
+
+DELETE FROM Pet WHERE idPet = 3;
+
+SELECT * FROM Pet;
+
+DROP TABLE Pet;
+DROP TABLE Cliente;
+
+
+
+-- Exercício 2
+
+CREATE DATABASE FamiliaGastos;
+USE FamiliaGastos;
+
+CREATE TABLE Pessoa (
+    idPessoa INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(100),
+    dtNasc DATE,
+    profissao VARCHAR(100)
+);
+
+CREATE TABLE Gasto (
+    idGasto INT AUTO_INCREMENT PRIMARY KEY,
+    dataGasto DATE,
+    valor DECIMAL(10, 2),
+    descricao VARCHAR(255),
+    idPessoa INT, FOREIGN KEY (idPessoa) REFERENCES Pessoa(idPessoa)
+);
+
+INSERT INTO Pessoa (nome, dtNasc, profissao)
+VALUES 
+('João Silva', '1985-06-15', 'Engenheiro'),
+('Maria Oliveira', '1990-03-10', 'Médica'),
+('Pedro Santos', '2000-12-25', 'Estudante'),
+('Ana Santos', '1995-08-30', 'Professora');
+
+INSERT INTO Gasto (dataGasto, valor, descricao, idPessoa)
+VALUES
+('2024-01-10', 200.50, 'Compra de livros', 1),
+('2024-02-15', 150.00, 'Pagamento de academia', 2),
+('2024-03-20', 300.75, 'Compra de roupa', 3),
+('2024-04-05', 100.00, 'Cinema', 4),
+('2024-04-10', 50.00, 'Almoço', 1);
+
+SELECT * FROM Pessoa;
+
+SELECT * FROM Gasto;
+
+SELECT * FROM Pessoa WHERE nome LIKE '%Silva';
+SELECT * FROM Gasto WHERE valor > 100.00;
+
+SELECT Pessoa.nome, Gasto.descricao, Gasto.valor, Gasto.dataGasto
+FROM Pessoa
+JOIN Gasto ON Pessoa.idPessoa = Gasto.idPessoa;
+
+SELECT Pessoa.nome, Gasto.descricao, Gasto.valor, Gasto.dataGasto
+FROM Pessoa
+JOIN Gasto ON Pessoa.idPessoa = Gasto.idPessoa WHERE pessoa.nome = 'João Silva';
+
+UPDATE Gasto SET valor = 120.00 WHERE idGasto = 4;
+
+SELECT * FROM Gasto WHERE idGasto = 4;
+
+DELETE FROM Gasto WHERE idGasto = 3;
+
+SELECT * FROM Gasto;
+
+
+-- Exercício 3
+
+CREATE DATABASE Treinador;
+USE Treinador;
+
+CREATE TABLE Treinador (
+    idTreinador INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(100),
+    telefone VARCHAR(20),
+    email VARCHAR(100),
+    idTreinadorOrientador INT,FOREIGN KEY (idTreinadorOrientador) REFERENCES Treinador(idTreinador)
+);
+
+CREATE TABLE Nadador (
+    idNadador INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(100),
+    estado VARCHAR(50),
+    dtNasc DATE,
+    idTreinador INT, FOREIGN KEY (idTreinador) REFERENCES Treinador(idTreinador)
+);
+
+
+INSERT INTO Treinador (nome, telefone, email, idTreinadorOrientador) VALUES 
+('Carlos Mendes', '99999-1111', 'carlos.mendes@exemplo.com', NULL), 
+('João Silva', '99999-2222', 'joao.silva@exemplo.com', NULL),
+('Marcos Lima', '99999-3333', 'marcos.lima@exemplo.com', 1), 
+('Lucas Souza', '99999-4444', 'lucas.souza@exemplo.com', 2); 
+
+INSERT INTO Nadador (nome, estado, dtNasc, idTreinador) VALUES 
+('Pedro Santos', 'SP', '2001-05-10', 1),  
+('Maria Oliveira', 'RJ', '1998-07-25', 2), 
+('Ana Pereira', 'MG', '2003-09-12', 1); 
+
+
+SELECT * FROM Treinador;
+SELECT * FROM Nadador;
+
+SELECT Treinador.nome AS Treinador, Nadador.nome AS Nadador, Nadador.estado, Nadador.dtNasc
+FROM Treinador
+JOIN Nadador ON Treinador.idTreinador = Nadador.idTreinador;
+
+
+SELECT Treinador.nome AS Treinador, Nadador.nome AS Nadador, Nadador.estado, Nadador.dtNasc
+FROM Treinador
+JOIN Nadador ON Treinador.idTreinador = Nadador.idTreinador
+WHERE Treinador.nome = 'Carlos Mendes';
+
+
+SELECT T1.nome AS Treinador, T2.nome AS Orientador
+FROM Treinador T1
+LEFT JOIN Treinador T2 ON T1.idTreinadorOrientador = T2.idTreinador;
+
+SELECT T1.nome AS Treinador, T2.nome AS Orientador
+FROM Treinador T1
+LEFT JOIN Treinador T2 ON T1.idTreinadorOrientador = T2.idTreinador
+WHERE T2.nome = 'Carlos Mendes';
+
+
+SELECT T1.nome AS Treinador, T2.nome AS Orientador, Nadador.nome AS Nadador
+FROM Treinador T1
+LEFT JOIN Treinador T2 ON T1.idTreinadorOrientador = T2.idTreinador
+JOIN Nadador ON T1.idTreinador = Nadador.idTreinador;
+
+
+SELECT T1.nome AS Treinador, T2.nome AS Orientador, Nadador.nome AS Nadador
+FROM Treinador T1
+LEFT JOIN Treinador T2 ON T1.idTreinadorOrientador = T2.idTreinador
+JOIN Nadador ON T1.idTreinador = Nadador.idTreinador
+WHERE T1.nome = 'João Silva';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+-- Exercício 4
+ 
 CREATE DATABASE Locadora;
 USE Locadora;
 
